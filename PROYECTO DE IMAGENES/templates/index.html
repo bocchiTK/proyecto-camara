@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDIT Estudio Imagen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dark-mode">
+    <header class="header">
+        <div class="logo">
+            <i class="fa-solid fa-microchip"></i>
+            <span>Edicion de Imagenes<strong>NueroStudio</strong></span>
+        </div>
+        
+        <!-- Lámpara Interactiva (Doble de tamaño) -->
+        <div class="lamp-container" id="lampToggle" title="Haz clic en la lámpara para encender o apagar">
+            <img src="{{ url_for('static', filename='imagenes/apagado.png') }}" alt="Lámpara" class="lamp-img" id="lampImage">
+        </div>
+    </header>
+
+    <main class="studio-layout">
+        <!-- Panel Izquierdo: Controles -->
+        <aside class="sidebar card">
+            <h2><i class="fa-solid fa-sliders"></i> Ajustes de Visión</h2>
+            
+            <div class="form-group upload-box">
+                <label for="imageInput" class="custom-file-upload">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Seleccionar Imagen
+                </label>
+                <input type="file" id="imageInput" name="image" accept="image/*">
+                <span id="fileName">Sin archivo seleccionado</span>
+            </div>
+
+            <!-- Sección: Claro -->
+            <div class="control-group">
+                <h3><i class="fa-regular fa-sun"></i> Claro</h3>
+                
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-sun"></i> Brillo <span id="valBrightness">0</span></label>
+                    <input type="range" id="brightness" min="-100" max="100" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-circle-half-stroke"></i> Exposición <span id="valExposure">0</span></label>
+                    <input type="range" id="exposure" min="-50" max="50" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-circle-radiation"></i> Contraste <span id="valContrast">0</span></label>
+                    <input type="range" id="contrast" min="-100" max="100" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-regular fa-lightbulb"></i> Luces <span id="valHighlights">0</span></label>
+                    <input type="range" id="highlights" min="-100" max="100" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-moon"></i> Sombras <span id="valShadows">0</span></label>
+                    <input type="range" id="shadows" min="-100" max="100" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-border-top-left"></i> Viñeta <span id="valVignette">0</span></label>
+                    <input type="range" id="vignette" min="0" max="100" value="0">
+                </div>
+            </div>
+
+            <!-- Sección: Color & Detalle -->
+            <div class="control-group">
+                <h3><i class="fa-solid fa-palette"></i> Color & Detalle</h3>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-eye-dropper"></i> Saturación <span id="valSaturation">0</span></label>
+                    <input type="range" id="saturation" min="-100" max="100" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-temperature-half"></i> Calidez <span id="valWarmth">0</span></label>
+                    <input type="range" id="warmth" min="-50" max="50" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-droplet"></i> Tono (Hue) <span id="valHue">0</span></label>
+                    <input type="range" id="hue" min="-90" max="90" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-gem"></i> Nitidez <span id="valSharpness">0</span></label>
+                    <input type="range" id="sharpness" min="0" max="50" value="0">
+                </div>
+
+                <div class="slider-item">
+                    <label><i class="fa-solid fa-water"></i> Desenfoque (Blur) <span id="valBlur">0</span></label>
+                    <input type="range" id="blur" min="0" max="15" value="0">
+                </div>
+
+                <div class="checkbox-item">
+                    <label><input type="checkbox" id="grayscale"> Escala de Grises</label>
+                </div>
+            </div>
+
+            <a id="downloadBtn" class="btn-primary" style="display: none; text-align: center; text-decoration: none;" download="imagen_procesada.jpg">
+                <i class="fa-solid fa-download"></i> Guardar Imagen
+            </a>
+        </aside>
+
+        <!-- Panel Derecho: Vista previa y Métricas ML -->
+        <section class="main-content card">
+            <h2><i class="fa-solid fa-image"></i> Vista Previa y Diagnóstico ML</h2>
+            
+            <div class="preview-area">
+                <img id="resultImg" src="" alt="Resultado" style="display: none;">
+                <div id="placeholderText" class="placeholder">
+                    <i class="fa-solid fa-image-portrait"></i>
+                    <p>Sube una imagen.</p>
+                </div>
+            </div>
+
+            <div id="mlResults" class="ml-dashboard" style="display: none;">
+                <div class="metric-card">
+                    <i class="fa-solid fa-sun"></i>
+                    <div>
+                        <small>Brillo Promedio</small>
+                        <h4 id="brightnessVal">-</h4>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <div>
+                        <small>Desviación Contraste</small>
+                        <h4 id="contrastVal">-</h4>
+                    </div>
+                </div>
+                <div class="metric-card highlight">
+                    <i class="fa-solid fa-brain"></i>
+                    <div>
+                        <small>Predicción del Modelo</small>
+                        <h4 id="predictionVal">-</h4>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
